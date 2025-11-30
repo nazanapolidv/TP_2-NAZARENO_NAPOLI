@@ -1,0 +1,154 @@
+-- -- Crear base de datos
+-- CREATE DATABASE IF NOT EXISTS plataformas_desarrollo;
+
+-- USE plataformas_desarrollo;
+
+-- -- Tabla de usuarios
+-- CREATE TABLE
+--     IF NOT EXISTS usuarios (
+--         id INT AUTO_INCREMENT PRIMARY KEY,
+--         nombre VARCHAR(100) NOT NULL,
+--         apellido VARCHAR(100) NOT NULL,
+--         email VARCHAR(255) UNIQUE NOT NULL,
+--         password VARCHAR(255) NOT NULL,
+--         telefono VARCHAR(20),
+--         direccion TEXT,
+--         fecha_nacimiento DATE,
+--         dni VARCHAR(20) UNIQUE NOT NULL,
+--         obra_social VARCHAR(100),
+--         numero_afiliado VARCHAR(50),
+--         rol ENUM ('paciente', 'medico', 'admin') DEFAULT 'paciente',
+--         estado ENUM ('activo', 'inactivo') DEFAULT 'activo',
+--         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+--     );
+
+-- -- Tabla de especializaciones
+-- CREATE TABLE
+--     IF NOT EXISTS especializaciones (
+--         id INT AUTO_INCREMENT PRIMARY KEY,
+--         nombre VARCHAR(100) NOT NULL UNIQUE,
+--         descripcion TEXT,
+--         imagen VARCHAR(255),
+--         estado ENUM ('activo', 'inactivo') DEFAULT 'activo',
+--         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+--     );
+
+-- -- Tabla de médicos
+-- CREATE TABLE
+--     IF NOT EXISTS medicos (
+--         id INT AUTO_INCREMENT PRIMARY KEY,
+--         usuario_id INT NOT NULL,
+--         especialización_id INT NOT NULL,
+--         matricula VARCHAR(50) UNIQUE NOT NULL,
+--         horario_inicio TIME,
+--         horario_fin TIME,
+--         dias_atencion JSON,
+--         estado ENUM ('activo', 'inactivo') DEFAULT 'activo',
+--         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--         FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE,
+--         FOREIGN KEY (especialización_id) REFERENCES especializaciones (id) ON DELETE CASCADE
+--     );
+
+-- -- Tabla de citas
+-- CREATE TABLE
+--     IF NOT EXISTS citas (
+--         id INT AUTO_INCREMENT PRIMARY KEY,
+--         paciente_id INT NOT NULL,
+--         medico_id INT NOT NULL,
+--         fecha DATE NOT NULL,
+--         hora TIME NOT NULL,
+--         motivo TEXT,
+--         estado ENUM (
+--             'pendiente',
+--             'confirmada',
+--             'cancelada',
+--             'completada'
+--         ) DEFAULT 'pendiente',
+--         observaciones TEXT,
+--         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--         FOREIGN KEY (paciente_id) REFERENCES usuarios (id) ON DELETE CASCADE,
+--         FOREIGN KEY (medico_id) REFERENCES medicos (id) ON DELETE CASCADE
+--     );
+
+-- -- Tabla de historial médico
+-- CREATE TABLE
+--     IF NOT EXISTS historial_medico (
+--         id INT AUTO_INCREMENT PRIMARY KEY,
+--         paciente_id INT NOT NULL,
+--         medico_id INT NOT NULL,
+--         cita_id INT,
+--         fecha DATE NOT NULL,
+--         diagnostico TEXT,
+--         tratamiento TEXT,
+--         medicamentos TEXT,
+--         observaciones TEXT,
+--         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--         FOREIGN KEY (paciente_id) REFERENCES usuarios (id) ON DELETE CASCADE,
+--         FOREIGN KEY (medico_id) REFERENCES medicos (id) ON DELETE CASCADE,
+--         FOREIGN KEY (cita_id) REFERENCES citas (id) ON DELETE SET NULL
+--     );
+
+-- -- Insertar datos iniciales de especializaciones
+-- INSERT INTO
+--     especializaciones (nombre, descripcion, imagen)
+-- VALUES
+--     (
+--         'Cardiología',
+--         'Especialidad médica que se encarga del estudio, diagnóstico y tratamiento de las enfermedades del corazón y del aparato circulatorio',
+--         'cardiologia.png'
+--     ),
+--     (
+--         'Neurología',
+--         'Especialidad médica que trata los trastornos del sistema nervioso',
+--         'neurologia.png'
+--     ),
+--     (
+--         'Dermatología',
+--         'Especialidad médica que se encarga del estudio de la estructura y función de la piel',
+--         'dermatologia.png'
+--     ),
+--     (
+--         'Pediatría',
+--         'Especialidad médica que estudia al niño y sus enfermedades',
+--         'pediatria.png'
+--     ),
+--     (
+--         'Ginecología',
+--         'Especialidad médica que trata las enfermedades del sistema reproductor femenino',
+--         'ginecologia.png'
+--     ),
+--     (
+--         'Traumatología',
+--         'Especialidad médica que se dedica al estudio de las lesiones del aparato locomotor',
+--         'traumatologia.png'
+--     );
+
+-- -- Insertar usuario administrador por defecto
+-- INSERT INTO
+--     usuarios (nombre, apellido, email, password, dni, rol)
+-- VALUES
+--     (
+--         'Admin',
+--         'Sistema',
+--         'admin@hospital.com',
+--         '$2a$10$brWycMgYN1Ep2XS1IKxnqeeA7ekpLGVdy1cQ9/a4vpwbgx5H8o75W',
+--         '12345678',
+--         'admin'
+--     );
+
+-- -- Crear índices para mejorar el rendimiento
+-- CREATE INDEX idx_usuarios_email ON usuarios (email);
+
+-- CREATE INDEX idx_usuarios_dni ON usuarios (dni);
+
+-- CREATE INDEX idx_citas_fecha ON citas (fecha);
+
+-- CREATE INDEX idx_citas_paciente ON citas (paciente_id);
+
+-- CREATE INDEX idx_citas_medico ON citas (medico_id);
+
+-- CREATE INDEX idx_historial_paciente ON historial_medico (paciente_id);
+
+-- CREATE INDEX idx_historial_fecha ON historial_medico (fecha);
